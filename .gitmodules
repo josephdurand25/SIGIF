@@ -1,0 +1,9 @@
+[submodule "frontend/Gestionnaire"]
+	path = frontend/Gestionnaire
+	url = https://github.com/josephdurand25/Gestionnaire-SIGIF.git
+[submodule "API/Auth"]
+	path = API/Auth
+	url = https://github.com/josephdurand25/Auth-Api.git
+[submodule "API/Students"]
+	path = API/Students
+	url = https://github.com/josephdurand25/Students-Api.git
