@@ -1,0 +1,19 @@
+# serveur web
+openresty-nginx/*
+
+!openresty-nginx/conf/
+!openresty-nginx/lua/
+
+openresty-nginx/conf/*
+!openresty-nginx/conf/nginx.conf
+!openresty-nginx/conf/nginx-Current.conf
+!openresty-nginx/conf/nginxV1.conf
+
+openresty-nginx/lua/*
+
+!openresty-nginx/lua/permissions.lua
+!openresty-nginx/lua/check_permissions.lua
+
+openresty-nginx/lua/jit/
+
+# Service
