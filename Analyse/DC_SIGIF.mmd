@@ -1,0 +1,243 @@
+
+
+classDiagram
+    %% ============================================
+    %% CLASSES DE BASE
+    %% ============================================
+
+    class Utilisateur {
+        <<Abstract>>
+        -id: int
+        -nom: string
+        -prenom: string
+        -email: string
+        -password_hash: string
+        -telephone: string
+        -role: string
+        -statut: string
+        +seConnecter()
+        +seDeconnecter()
+        +changerMotDePasse()
+    }
+
+    class Etudiant {
+        -numero_etudiant: string
+        -date_naissance: Date
+        -lieu_naissance: string
+        -genre: string
+        -nationalite: string
+        -adresse_complete: string
+        -region_origine: string
+        -filiere: string
+        -niveau: string
+        -statut_academique: string
+        -photo_profil: string
+        -date_inscription: Date
+        +sInscrireGroupe()
+        +consulterNotes()
+        +payerDroits()
+        +genererReleve()
+    }
+
+    class Enseignant {
+        -matricule: string
+        -departement: string
+        -bureau: string
+        -specialite: string
+        -grade: string
+        +saisirNotes()
+        +gererPresences()
+        +consulterListeEtudiants()
+        +genererStatsCours()
+    }
+
+    class Administrateur {
+        -departement: string
+        -fonction: string
+        +validerInscription()
+        +gererGroupesCours()
+        +genererRapports()
+        +configurerSysteme()
+    }
+
+    %% ============================================
+    %% CLASSES ACADÉMIQUES
+    %% ============================================
+
+    class GroupeCours {
+        -code: string
+        -nom: string
+        -filiere: string
+        -niveau: string
+        -semestre: string
+        -credits_total: int
+        -capacite_max: int
+        -statut: string
+        +calculerPlacesDisponibles()
+        +verifierCapacite()
+        +genererEmploiTemps()
+    }
+
+    class UniteEnseignement {
+        -code: string
+        -nom: string
+        -type: string
+        -credits: int
+        -coefficient: float
+        -volume_horaire_total: int
+        -description: string
+        +calculerMoyenneUE()
+        +verifierPrerequis()
+    }
+
+    class Matiere {
+        -code: string
+        -nom: string
+        -type_cours: string
+        -credits: int
+        -coefficient: float
+        -volume_horaire: int
+        -salle: string
+        -jour: string
+        -heure_debut: string
+        -heure_fin: string
+        +calculerNoteFinale()
+        +verifierConflitHoraire()
+    }
+
+
+    class Salle {
+        -code: string
+        -nom: string
+        -capacite: int
+        -type: string
+        -equipements: string[]
+        +verifierDisponibilite()
+    }
+
+    %% ============================================
+    %% CLASSES DE GESTION
+    %% ============================================
+
+    class InscriptionGroupe {
+        -numero_inscription: string
+        -statut: string
+        -date_inscription: Date
+        -date_validation: Date
+        -fiche_url: string
+        +validerInscription()
+        +genererFichePDF()
+        +calculerStatutPaiement()
+    }
+
+    class Note {
+        -note_cc: float
+        -note_examen: float
+        -note_tp: float
+        -note_finale: float
+        -type_evaluation: string
+        -validee: boolean
+        -date_validation: Date
+        -commentaire: string
+        -session: string
+        +calculerNoteFinale()
+        +verifierAdmission()
+        +determinerMention()
+    }
+
+    class PaiementDroits {
+        -montant_total: float
+        -montant_paye: float
+        -statut_paiement: string
+        -date_dernier_paiement: Date
+        -mode_paiement: string
+        -reference: string
+        +calculerResteAPayer()
+        +verifierExoneration()
+        +genererQuittance()
+    }
+
+    class Presence {
+        -date_seance: Date
+        -type_seance: string
+        -present: boolean
+        -justification: string
+        -signature: string
+        +calculerTauxPresence()
+        +genererFeuillePresence()
+        +verifierJustification()
+    }
+
+    %% ============================================
+    %% CLASSES DE SUPPORT
+    %% ============================================
+
+    class AnneeAcademique {
+        -code: string
+        -date_debut: Date
+        -date_fin: Date
+        -statut: string
+        +estEnCours()
+        +calculerSemestreCourant()
+    }
+
+    class Filiere {
+        -code: string
+        -nom: string
+        -departement: string
+        -niveaux_offerts: string[]
+        -responsable_id: int
+        +verifierPrerequisFiliere()
+    }
+
+
+
+    %% ============================================
+    %% RELATIONS ENTRE CLASSES
+    %% ============================================
+
+    %% Héritage
+    Utilisateur <|-- Etudiant
+    Utilisateur <|-- Enseignant
+    Utilisateur <|-- Administrateur
+
+    %% Associations
+    Etudiant "1" --> "0..*" InscriptionGroupe : s'inscrit à
+    GroupeCours "1" --> "0..*" InscriptionGroupe : reçoit
+    
+    GroupeCours "1" --> "1..*" UniteEnseignement : contient
+    UniteEnseignement "1" --> "1..*" Matiere : compose de
+    
+    Etudiant "1" --> "0..*" Note : obtient
+    Matiere "1" --> "0..*" Note : évalue par
+    
+    Etudiant "1" --> "0..*" PaiementDroits : effectue
+    InscriptionGroupe "1" --> "1" PaiementDroits : associé à
+    InscriptionGroupe "1" --> "1" AnneeAcademique :  appartient à
+    
+    Etudiant "1" --> "0..*" Presence : a
+    Matiere "1" --> "0..*" Presence : enregistre pour
+    
+    Enseignant "1" --> "0..*" UniteEnseignement : enseigne
+    Administrateur "1" --> "0..*" GroupeCours : gère
+    
+    %% GroupeCours "1" --> "1" AnneeAcademique : appartient à
+    GroupeCours "1" --> "1" Filiere : de
+    
+    Matiere "0..1" --> "1" Salle : se déroule dans
+
+    %% Agrégations
+    GroupeCours "1" o-- "*" UniteEnseignement : UE composantes
+    UniteEnseignement "1" o-- "*" Matiere : matières constitutives
+
+    %% Composition
+    InscriptionGroupe "1" *-- "1" PaiementDroits : paiement inclus
+    Note "1" *-- "1" Presence : présence liée
+
+    %% Dépendances
+    Note ..> Coefficient : utilise
+    InscriptionGroupe ..> ValidationWorkflow : suit
+
+    %% Les crédits sont-ils attribués à l'UE ou à la Matière ?
+    %% Un étudiant inscrit dans GroupeCours "L1-INFO-S1" suit TOUTES les matières de ce groupe ?
+    %% Comment calculer la note finale de l'UE ?

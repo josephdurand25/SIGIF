@@ -1,0 +1,223 @@
+classDiagram
+    %% ============================================
+    %% CLASSES DE BASE
+    %% ============================================
+    class Utilisateur {
+        <<Abstract>>
+        -id: int
+        -nom: string
+        -prenom: string
+        -email: string
+        -password_hash: string
+        -telephone: string
+        -role: string
+        -statut: string
+        +seConnecter()
+        +seDeconnecter()
+        +changerMotDePasse()
+    }
+
+    class SessionExamen {
+        - libelle: string Ex: 06-2026
+        -type: string
+        +demarrerSession()
+        +cloturerSession()
+    }
+
+    class AnneeAcademique {
+        -annee: string
+        +demarrerAnnee()
+        +cloturerAnnee()
+    }
+
+    class Inscription  {
+        <<association>>
+        numero_inscription: string
+        -date_inscription: Date
+        -date_validation: Date
+        -dossier_inscription_url: string
+        -statut: string
+        +validerInscription()
+        +genererFichePDF()
+        +calculerStatutPaiement()
+    }
+
+    class Enseignant {
+        -matricule: string
+        -departement: string
+        -bureau: string
+        -specialite: string
+        -grade: string
+        +saisirNotes()
+        +gererPresences()
+        +consulterListeEtudiants()
+        +genererStatsCours()
+    }
+
+    class Administrateur {
+        -departement: string
+        -fonction: string
+        +validerInscription()
+        +gererGroupesCours()
+        +genererRapports()
+        +configurerSysteme()
+    }
+
+    class Etudiant {
+        -numero_etudiant: string
+        -date_naissance: Date
+        -lieu_naissance: string
+        -genre: string
+        -nationalite: string
+        -adresse_complete: string
+        -region_origine: string
+        -niveau: string
+        -statut_academique: string
+        -photo_profil: string
+        -date_inscription: Date
+        +sInscrireGroupe()
+        +consulterNotes()
+        +payerDroits()
+        +genererReleve()
+    }
+
+    class GroupeUE {
+        -code: string
+        -nom: string
+        -niveau: string
+        -semestre: string
+        -credits_total: int
+        -capacite_max: int
+        -statut: string
+        +calculerPlacesDisponibles()
+        +verifierCapacite()
+        +genererEmploiTemps()
+    }
+
+    class Specialite {
+        -code: string
+        -nom: string
+        -departement: string
+        -niveaux_offerts: string[]
+        -responsable_id: int
+        +verifierPrerequisSpecialite()
+    }
+
+    class Matiere {
+        -code: string
+        -nom: string
+        -type_cours: string
+        -credits: int
+        -coefficient: float
+        -volume_horaire: int
+        -salle: string
+        -jour: string
+        -heure_debut: string
+        -heure_fin: string
+        +calculerNoteFinale()
+        +verifierConflitHoraire()
+    }
+
+    class Presence {
+        -date_seance: Date
+        -type_seance: string
+        -present: boolean
+        -justification: string
+        -signature: string
+        +calculerTauxPresence()
+        +genererFeuillePresence()
+        +verifierJustification()
+    }
+
+    class Note {
+        -note_cc: float
+        -note_examen: float
+        -note_tp: float
+        -note_finale: float
+        -type_evaluation: string
+        -validee: boolean
+        -date_validation: Date
+        -commentaire: string
+        +calculerNoteFinale()
+        +verifierAdmission()
+        +determinerMention()
+    }
+    class UniteEnseignement {
+        -code: string
+        -nom: string
+        -type: string
+        -credits: int
+        -volume_horaire_total: int
+        -description: string
+        +calculerMoyenneUE()
+        +verifierPrerequis()
+    }
+    
+
+    class PaiementDroits {
+        -montant_total: float
+        -montant_paye: float
+        -statut_paiement: string
+        -date_dernier_paiement: Date
+        -mode_paiement: string
+        -reference: string
+        +calculerResteAPayer()
+        +verifierExoneration()
+        +genererQuittance()
+    }
+
+    class DossierCandidature {
+        -id: int
+        -etudiant_id: int
+        -date_candidature: Date
+        -statut: string
+        -documents_url: string[]
+        +soumettreCandidature()
+        +annulerCandidature()
+        +consulterStatut()
+    }
+
+    class Seance {
+        -date: Date
+        -heure_debut: string
+        -heure_fin: string
+    }
+
+    class Salle {
+        -code: string
+        -nom: string
+        -capacite: int
+        -type: string
+        -equipements: string[]
+        +verifierDisponibilite()
+    }
+   
+
+    %% ============================================
+    %% RELATIONS ENTRE CLASSES
+    %% ============================================
+    Utilisateur <|-- Etudiant
+    Utilisateur <|-- Enseignant
+    Utilisateur <|-- Administrateur
+
+    Administrateur "1" --> "0..*" GroupeUE : gère
+    GroupeUE -- Specialite: correspond à
+    Etudiant "1" --> "0..1" Inscription : s'inscrit à
+    Inscription "1" --> "1..*" GroupeUE : concerne
+    Etudiant --> SessionExamen: participe à
+    Inscription "1" --> "1" AnneeAcademique :  appartient à
+    AnneeAcademique "1" --> "1..4" SessionExamen :  a
+    Enseignant "1" -- "1" Matiere: enseigne
+    Matiere "1" --> "0..*" SessionExamen : évaluée dans
+    UniteEnseignement "1" *-- "1..*" Matiere: est composée de
+    Matiere "1" -- "1..*" Note: evalué par
+    Inscription "1" *-- "1..*" PaiementDroits : paiement inclus
+    Etudiant "1" <-- "1" DossierCandidature : possede
+    SessionExamen "1" --> "0..*" Note : contient
+    Presence "0..*" --> "1" Etudiant : enregistre pour
+    Seance "1..*" --> "1" Matiere : a pour
+    Seance "1" --> "1" Salle : se déroule dans
+    Etudiant "1" --> "0..*" Note : obtient
+    Presence "0..*" --> "1" Seance : enregistre pour
+    
+ 

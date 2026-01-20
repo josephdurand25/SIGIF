@@ -1,0 +1,29 @@
+classDiagram
+    %% ============================================
+    %% RELATIONS ENTRE CLASSES (VERSION CORRIGÉE)
+    %% ============================================
+    Utilisateur <|-- Etudiant
+    Utilisateur <|-- Enseignant
+    Utilisateur <|-- Administrateur
+
+    Administrateur "1" --> "0..*" GroupeUE : gère
+    GroupeUE -- Specialite: correspond à
+    Etudiant "1" --> "0..1" Inscription : s'inscrit à
+    Inscription "1" --> "1..*" GroupeUE : concerne
+    Etudiant --> SessionExamen: participe à
+    Inscription "1" --> "1" AnneeAcademique : appartient à
+    AnneeAcademique "1" --> "1..4" SessionExamen : a
+    Enseignant "1" -- "1" Matiere: enseigne
+    SessionExamen "1" --> "*" Matiere : évalue 
+    UniteEnseignement "1" *-- "1..*" Matiere: est composée de
+    Matiere "1" -- "1..*" Note: evalué par
+    SessionExamen "1" --> "0..*" Note : produit  
+    Inscription "1" *-- "1..*" PaiementDroits : paiement inclus
+    Etudiant "1" <-- "1" DossierCandidature : possede
+    Presence "0..*" --> "1" Etudiant : enregistre pour
+    Seance "1..*" --> "1" Matiere : a pour
+    Seance "1" --> "1" Salle : se déroule dans
+    Etudiant "1" --> "0..*" Note : obtient
+    Presence "0..*" --> "1" Seance : enregistre pour
+    
+    %% Note: L'attribut -session: string doit être supprimé de la classe Note
