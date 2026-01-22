@@ -42,7 +42,7 @@ git --version       # v2.x ou supérieur
 
 ```bash
 # Cloner le repository
-git clone --recursive https://github.com/your-org/sigif.git
+git clone --recursive https://github.com/josephdurand25/SIGIF.git
 cd sigif
 
 # Ou pour un clone existant
