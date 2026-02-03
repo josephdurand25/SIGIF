@@ -206,9 +206,9 @@ classDiagram
     Inscription "1" --> "1..*" GroupeUE : concerne
     Etudiant --> SessionExamen: participe à
     Inscription "1" --> "1" AnneeAcademique :  appartient à
-    AnneeAcademique "1" --> "1..4" SessionExamen :  a
     Enseignant "1" -- "1" Matiere: enseigne
     Matiere "1" --> "0..*" SessionExamen : évaluée dans
+    AnneeAcademique "1" --> "1..4" SessionExamen :  a
     UniteEnseignement "1" *-- "1..*" Matiere: est composée de
     Matiere "1" -- "1..*" Note: evalué par
     Inscription "1" *-- "1..*" PaiementDroits : paiement inclus
@@ -219,5 +219,7 @@ classDiagram
     Seance "1" --> "1" Salle : se déroule dans
     Etudiant "1" --> "0..*" Note : obtient
     Presence "0..*" --> "1" Seance : enregistre pour
+    Etudiant "0..*" -- "0..2" Specialite: être dans
+    %% Matiere "*" -- "1" Specialite: appartient à
     
  
